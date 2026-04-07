@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import init_db
 
 app = FastAPI(title="DMS API", version="1.0.0")
+
+# 初始化数据库
+init_db()
 
 # CORS 配置
 app.add_middleware(

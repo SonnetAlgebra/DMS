@@ -1,18 +1,27 @@
 """数据库连接配置"""
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from .config import settings
 
-DATABASE_URL = "sqlite:///./dms.db"
+# SQLite 数据库连接
+DATABASE_URL = f"sqlite:///{settings.database_path}"
 
+# 创建引擎
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False}
+    connect_args={"check_same_thread": False},
+    echo=False  # 设为 True 可查看 SQL 语句
 )
 
+# 创建会话工厂
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# 基础类
 Base = declarative_base()
+
+# 元数据（延迟创建）
+metadata = None
 
 
 def get_db():
@@ -22,3 +31,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def init_db():
+    """初始化数据库，创建所有表"""
+    global metadata
+    metadata = MetaData()
+    Base.metadata.create_all(bind=engine)
