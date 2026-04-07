@@ -48,12 +48,17 @@
   - Git 配置：添加 .gitignore，排除临时文件
   - 依赖版本验证（全部符合 v1.5 要求）
 
-### 进行中 (In Progress)
+### 已完成 (Completed)
 
 - **BE-02** 数据库建模
-  - 按计划书 v1.5 第 2.4 节创建 4 张表及索引
-  - 需要创建：`metrics`、`time_series`、`anomalies`、`alerts`
-  - 遵循技术红线：字段必须与计划书完全一致
+  - 创建 4 张核心表，完全按计划书 v1.5 2.4 节定义
+  - 添加必要的索引优化和唯一约束
+  - value 字段允许 NULL，符合计划书要求
+  - 自测：运行 init_db_simple.py 验证通过
+
+### 待开始 (Pending)
+
+- **BE-03** CSV数据接入
 
 ### 待开始 (Pending)
 
