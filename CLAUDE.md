@@ -87,30 +87,33 @@ feat: 实现 time_series 表创建
 
 ## Architecture
 
-### Directory Structure（按计划书 v1.5 规范）
+### Directory Structure（按 IT 项目管理流程.md 执行阶段规范）
 
 ```
 DMS/
-├── backend/
-│   ├── app/
-│   │   ├── main.py              # FastAPI 入口
-│   │   ├── config.py            # 配置管理
-│   │   ├── database.py          # 数据库连接
-│   │   ├── models/              # SQLAlchemy ORM 模型
-│   │   ├── schemas/             # Pydantic 模式
-│   │   ├── services/           # 业务逻辑层
-│   │   ├── adapters/           # 适配器抽象层
-│   │   │   ├── base.py         # BaseAdapter 接口
-│   │   │   └── csv_adapter.py  # CSV 适配器实现
-│   │   └── routers/            # API 路由模块
+├── 项目/                        # 项目全生命周期文档
+│   ├── IT 项目管理流程.md        # 核心管理流程（本阶段规范）
+│   ├── 数据监控系统-需求文档.md    # 设想阶段产出（已批准）
+│   ├── 数据监控系统 - 计划书.md    # 规划阶段产出（v1.5 定稿版）
+│   └── 后续可添加：验收报告、复盘总结等
+├── backend/                    # 执行阶段产出
+│   ├── app/                   # FastAPI 应用代码
+│   │   ├── main.py            # FastAPI 入口
+│   │   ├── config.py          # 配置管理
+│   │   ├── database.py        # 数据库连接
+│   │   ├── models/            # SQLAlchemy ORM 模型
+│   │   ├── schemas/           # Pydantic 模式
+│   │   ├── services/          # 业务逻辑层
+│   │   ├── adapters/          # 适配器抽象层
+│   │   └── routers/          # API 路由模块
 │   ├── requirements.txt
 │   └── .env
-├── frontend/                    # 待实现
-├── tests/
-├── Git Commit 记录              # 技术档案（替代日志/）
-├── 项目情况说明.md              # 项目全貌
-├── PROJECT_STATE.md            # 项目进度
-└── 数据监控系统 - 计划书.md       # 权威技术规范
+├── frontend/                  # 待实现
+├── tests/                    # 测试代码
+├── Git Commit 记录          # 执行阶段技术档案（替代日志/）
+├── 项目情况说明.md          # 执行阶段项目全貌
+├── PROJECT_STATE.md          # 执行阶段进度跟踪
+└── Day1技术报告.md           # 阶段性技术报告（可扩展）
 ```
 
 ### 技术栈
