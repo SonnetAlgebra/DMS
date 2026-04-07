@@ -45,15 +45,14 @@ def init_database():
             metric_id INTEGER NOT NULL,
             timestamp DATETIME NOT NULL,
             value REAL,                          -- 原始值（NULL表示缺失）
-            FOREIGN KEY (metric_id) REFERENCES metrics(id),
-            UNIQUE(metric_id, timestamp)
+            FOREIGN KEY (metric_id) REFERENCES metrics(id)
         )
     ''')
-    # 添加复合索引
+    # 添加复合索引（但不加唯一约束）
     cursor.execute('''
         CREATE INDEX idx_time_series_metric_time ON time_series(metric_id, timestamp)
     ''')
-    print("SUCCESS: time_series 表创建成功")
+    print("SUCCESS: time_series 表创建成功（无唯一约束）")
 
     # 3. 创建异常记录表
     print("\n[3/4] 创建 anomalies 表...")
@@ -129,9 +128,10 @@ def init_database():
     print("\n=== 数据库创建成功！===")
     print("\n表结构摘要：")
     print("- metrics: 指标定义表")
-    print("- time_series: 时序数据表（带唯一约束和复合索引）")
+    print("- time_series: 时序数据表（复合索引，无唯一约束）")
     print("- anomalies: 异常快照表（记录上下文）")
     print("- alerts: 报警记录表")
+    print("\n注意：time_series 表允许同一指标同一时间有多条数据")
 
     return True
 
