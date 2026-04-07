@@ -1,0 +1,198 @@
+# CLAUDE.md
+
+This file is the **Core Discipline (核心戒律)** for Claude Code when working in this repository.
+
+## 核心戒律 (Core Discipline)
+
+### 1. 会话启动必报
+
+每次会话开始，必须主动报告：
+
+> "已读取《项目情况说明.md》、《CLAUDE.md》与《PROJECT_STATE.md》，当前任务节点为 [任务名]，准备就绪。"
+
+### 2. 熔断机制 (Circuit Breaker)
+
+同一报错重试 **3 次**失败必须停止，执行以下操作：
+
+1. **停止当前任务**
+2. **输出请求协助信息**，格式如下：
+
+```
+【请求协助】
+错误堆栈：<完整错误信息>
+涉及代码变更：<已修改的文件和代码段>
+尝试次数：3次均已失败
+```
+
+3. 等待技术负责人指示后再继续
+
+### 3. 自测要求 (Self-Testing)
+
+所有功能必须通过本地验证方可提交：
+
+| 功能类型 | 验证方式 |
+|----------|----------|
+| /health 接口 | `curl http://127.0.0.1:8000/health` |
+| 数据库建模 | 运行 `test_db.py` 验证表结构和索引 |
+| API 接口 | 使用 curl 或 Postman 验证返回结果 |
+| 业务逻辑 | 编写单元测试或集成测试 |
+
+**原则**：不测不交，任何代码提交前必须经过本地验证。
+
+### 4. Git 规范 (Git Standards)
+
+功能闭环后必须执行 `git commit`，**代替原有的 md 日志**：
+
+```bash
+git add .
+git commit -m "<详细的技术实现描述>"
+```
+
+**Commit Message 要求**：
+- 详细描述技术实现逻辑
+- 说明修改的文件和原因
+- 记录关键参数变更（如阈值调整）
+- 包含自测结果验证
+
+**示例**：
+```
+feat: 实现 time_series 表创建
+
+- 创建 SQLAlchemy ORM 模型 TimeSeries
+- 添加复合索引 (metric_id, timestamp)
+- 字段完全按计划书 2.4 节定义
+- value 字段允许 NULL 值
+
+自测：运行 test_db.py 验证通过，表结构正确
+```
+
+### 5. 技术红线 (Technical Red Lines)
+
+以下为不可逾越的技术底线：
+
+| 红线项 | 要求 |
+|--------|------|
+| **架构** | FastAPI + SQLite 架构，禁止更换技术栈 |
+| **除零保护** | Z-Score 计算必须除零保护（std=0 时返回 NULL） |
+| **缺失值处理** | 数据库中缺失值必须返回 NULL，不私自填充默认值 |
+| **字段一致性** | 数据模型必须与计划书字段完全一致，不私自增减 |
+
+违反任何红线必须立即停止并上报。
+
+### 6. 范围控制 (Scope Control)
+
+- 严格按《数据监控系统 - 计划书.md》执行
+- 禁止擅自扩大项目范围
+- 需求超出范围时，先向老板/KIMI 确认后再执行
+
+## Architecture
+
+### Directory Structure（按计划书 v1.5 规范）
+
+```
+DMS/
+├── backend/
+│   ├── app/
+│   │   ├── main.py              # FastAPI 入口
+│   │   ├── config.py            # 配置管理
+│   │   ├── database.py          # 数据库连接
+│   │   ├── models/              # SQLAlchemy ORM 模型
+│   │   ├── schemas/             # Pydantic 模式
+│   │   ├── services/           # 业务逻辑层
+│   │   ├── adapters/           # 适配器抽象层
+│   │   │   ├── base.py         # BaseAdapter 接口
+│   │   │   └── csv_adapter.py  # CSV 适配器实现
+│   │   └── routers/            # API 路由模块
+│   ├── requirements.txt
+│   └── .env
+├── frontend/                    # 待实现
+├── tests/
+├── Git Commit 记录              # 技术档案（替代日志/）
+├── 项目情况说明.md              # 项目全貌
+├── PROJECT_STATE.md            # 项目进度
+└── 数据监控系统 - 计划书.md       # 权威技术规范
+```
+
+### 技术栈
+
+| 层级 | 技术 | 版本 |
+|------|------|------|
+| 后端框架 | FastAPI | 0.104.1 |
+| ASGI 服务器 | Uvicorn | 0.24.0 |
+| ORM | SQLAlchemy | 2.0.23 |
+| 数据处理 | Pandas | 2.2.3 |
+| 数值计算 | NumPy | 2.2.4 |
+| 数据库 | SQLite | 单文件 |
+
+### 数据模型（4张表）
+
+| 表名 | 用途 | 关键说明 |
+|------|------|----------|
+| `metrics` | 指标定义 | id, name, description, unit |
+| `time_series` | 时序原始数据 | metric_id, timestamp, **value可为NULL** |
+| `anomalies` | 异常快照 | 记录检测时的阈值上下文 |
+| `alerts` | 报警记录 | anomaly_id, status |
+
+### 核心设计原则
+
+1. **time_series 仅存储原始数据**：不存储 is_anomaly 或 z_score，查询时动态计算
+2. **anomalies 是快照表**：每次 `/detect` 调用时，删除该指标所有旧快照
+3. **Z-Score 除零保护**：std=0 时返回 NULL
+4. **缺失值返回 NULL**：不私自填充默认值
+
+### API 端点规划
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/health` | GET | 健康检查 |
+| `/upload` | POST | CSV 数据导入 |
+| `/data` | GET | 时序数据查询（动态计算 is_anomaly，limit=5000） |
+| `/detect` | POST | 异常检测并保存快照 |
+| `/anomalies` | GET | 获取历史异常快照列表 |
+| `/correlation` | GET | Pearson 关联分析（有效点<3返回错误） |
+
+## Commands
+
+### Backend Development
+
+```bash
+# 进入后端目录
+cd backend
+
+# 启动开发服务器
+./venv/Scripts/python -m app.main
+
+# 健康检查
+curl http://127.0.0.1:8000/health
+
+# Git 提交（功能闭环后）
+git add .
+git commit -m "<详细的技术实现描述>"
+```
+
+## Backend Tasks (计划书 5.2 节)
+
+| 编号 | 任务 | 状态 |
+|------|------|------|
+| BE-01 | FastAPI 骨架搭建 | ✅ 已完成 |
+| BE-02 | 数据库建模 | 🔄 进行中 |
+| BE-03 | CSV 数据接入 | 待开始 |
+| BE-04 | 动态异常判定 | 待开始 |
+| BE-05 | 异常快照保存 | 待开始 |
+| BE-06 | 异常查询接口 | 待开始 |
+| BE-07 | Pearson 关联分析 | 待开始 |
+| BE-08 | 报警引擎 | 待开始 |
+| BE-09 | 适配器抽象层 | 待开始 |
+
+## Team
+
+- **技术负责人**：KIMI（架构方向）
+- **项目经理**：DeepSeek（进度监督）
+- **执行**：Claude Code
+
+## Reference Documents
+
+- `数据监控系统 - 计划书.md`（v1.5 定稿版）- 权威技术规范
+- `数据监控系统-需求文档.md` - 功能需求
+- `PROJECT_STATE.md` - 项目进度跟踪
+- `项目情况说明.md` - 项目全貌
