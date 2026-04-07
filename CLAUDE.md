@@ -100,8 +100,8 @@ DMS/
 │   ├── app/                   # FastAPI 应用代码
 │   │   ├── main.py            # FastAPI 入口
 │   │   ├── config.py          # 配置管理
-│   │   ├── database.py        # 数据库连接
-│   │   ├── models/            # SQLAlchemy ORM 模型
+│   │   ├── database.py        # 数据库连接（原生 SQLite）
+│   │   ├── models/            # SQLAlchemy 模型（暂未使用）
 │   │   ├── schemas/           # Pydantic 模式
 │   │   ├── services/          # 业务逻辑层
 │   │   ├── adapters/          # 适配器抽象层
@@ -111,9 +111,9 @@ DMS/
 ├── frontend/                  # 待实现
 ├── tests/                    # 测试代码
 ├── Git Commit 记录          # 执行阶段技术档案（替代日志/）
-├── 项目情况说明.md          # 执行阶段项目全貌
+├── 项目情况说明.md          # 执行阶段项目全貌（含技术债务）
 ├── PROJECT_STATE.md          # 执行阶段进度跟踪
-└── Day1技术报告.md           # 阶段性技术报告（可扩展）
+└── CLAUDE.md                 # 执行阶段核心戒律
 ```
 
 ### 技术栈
