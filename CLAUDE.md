@@ -66,6 +66,11 @@ feat: 实现 time_series 表创建
 自测：运行 test_db.py 验证通过，表结构正确
 ```
 
+**版本控制过滤红线**：
+- 必须维护 .gitignore 文件，严禁将 .env、venv/、__pycache__/、*.pyc、.pytest_cache/ 等私密配置及缓存文件提交至 Git
+- 提交前必须运行 `git status` 确认工作区干净
+- 发现已提交的敏感文件必须立即从 Git 历史中清除
+
 ### 5. 技术红线 (Technical Red Lines)
 
 以下为不可逾越的技术底线：

@@ -1,9 +1,12 @@
-# Python
+# Python 编译和缓存文件
 __pycache__/
 *.py[cod]
+*.pyo
 *$py.class
 *.so
 .Python
+
+# Python 打包和分发
 build/
 develop-eggs/
 dist/
@@ -20,71 +23,43 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environment
+# 虚拟环境
 venv/
 env/
 ENV/
 
-# Environment variables
+# 环境变量和敏感配置
 .env
 .env.local
 .env.*.local
 
-# IDE
+# IDE 配置
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# 操作系统文件
 .DS_Store
 Thumbs.db
 
-# Database
+# 数据库文件（仅用于开发，不应提交）
 *.db
 *.sqlite
 *.sqlite3
 
-# Logs
+# 日志文件
 *.log
 logs/
 
-# Testing
+# 测试覆盖率
 .coverage
 .pytest_cache/
 htmlcov/
+.pytest_cache/
 
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sbin/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
+# 单元测试 / 覆盖率报告
 htmlcov/
 .tox/
 .nox/
@@ -97,68 +72,10 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# Translations
+# 翻译文件
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.env.local
-.env.*.local
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# Custom
+# 临时文件
 *.tmp
 *.temp
-.DS_Store
