@@ -1,6 +1,6 @@
 # DMS 项目状态 (Project State)
 
-> 最后更新：2026-04-07 19:10 | Day 1
+> 最后更新：2026-04-08 | Day 2
 
 ---
 
@@ -30,6 +30,8 @@
 
 - ✅ BE-01：FastAPI 骨架搭建
 - ✅ BE-02：数据库建模
+- ✅ 源码检查意见修复：config.py 缺少 database_path、模型定义确认、main.py 切换原生 SQLite
+- ✅ 核心文件职责对齐：项目情况说明.md、CLAUDE.md、PROJECT_STATE.md
 
 ---
 
