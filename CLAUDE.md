@@ -96,7 +96,7 @@ feat: 实现 time_series 表创建
 - `项目情况说明.md` - 执行阶段项目全貌
 - `CLAUDE.md` - 执行阶段核心戒律
 - `PROJECT_STATE.md` - 执行阶段进度跟踪
-- `Git Commit记录` - 执行阶段技术档案
+- `Git Commit 记录` - 执行阶段技术档案
 - `backend/` 目录下的所有代码文件
 - `frontend/` 目录下的所有代码文件
 
@@ -107,35 +107,35 @@ feat: 实现 time_series 表创建
 
 **原则**：作为执行AI，只修改和创建执行阶段的产出物，确保代码实现符合已批准的计划书和需求文档。
 
+---
+
 ## Architecture
 
-### Directory Structure（按 IT 项目管理流程.md 执行阶段规范）
+### Directory Structure
 
 ```
 DMS/
 ├── 项目/                        # 项目全生命周期文档
-│   ├── IT 项目管理流程.md        # 核心管理流程（本阶段规范）
-│   ├── 数据监控系统-需求文档.md    # 设想阶段产出（已批准）
-│   ├── 数据监控系统 - 计划书.md    # 规划阶段产出（v1.5 定稿版）
-│   └── 后续可添加：验收报告、复盘总结等
+│   ├── IT 项目管理流程.md        # 核心管理流程
+│   ├── 数据监控系统-需求文档.md    # 设想阶段产出
+│   └── 数据监控系统 - 计划书.md    # 规划阶段产出（v1.5）
 ├── backend/                    # 执行阶段产出
 │   ├── app/                   # FastAPI 应用代码
 │   │   ├── main.py            # FastAPI 入口
 │   │   ├── config.py          # 配置管理
-│   │   ├── database.py        # 数据库连接（原生 SQLite）
-│   │   ├── models/            # SQLAlchemy 模型（暂未使用）
+│   │   ├── database.py        # 数据库连接
+│   │   ├── models/            # 数据模型
 │   │   ├── schemas/           # Pydantic 模式
 │   │   ├── services/          # 业务逻辑层
 │   │   ├── adapters/          # 适配器抽象层
-│   │   └── routers/          # API 路由模块
+│   │   └── routers/           # API 路由模块
 │   ├── requirements.txt
 │   └── .env
 ├── frontend/                  # 待实现
 ├── tests/                    # 测试代码
-├── Git Commit 记录          # 执行阶段技术档案（替代日志/）
 ├── 项目情况说明.md          # 执行阶段项目全貌（含技术债务）
 ├── PROJECT_STATE.md          # 执行阶段进度跟踪
-└── CLAUDE.md                 # 执行阶段核心戒律
+└── CLAUDE.md                 # 执行阶段核心戒律（本文件）
 ```
 
 ### 技术栈
@@ -176,6 +176,8 @@ DMS/
 | `/anomalies` | GET | 获取历史异常快照列表 |
 | `/correlation` | GET | Pearson 关联分析（有效点<3返回错误） |
 
+---
+
 ## Commands
 
 ### Backend Development
@@ -195,19 +197,7 @@ git add .
 git commit -m "<详细的技术实现描述>"
 ```
 
-## Backend Tasks (计划书 5.2 节)
-
-| 编号 | 任务 | 状态 |
-|------|------|------|
-| BE-01 | FastAPI 骨架搭建 | ✅ 已完成 |
-| BE-02 | 数据库建模 | 🔄 进行中 |
-| BE-03 | CSV 数据接入 | 待开始 |
-| BE-04 | 动态异常判定 | 待开始 |
-| BE-05 | 异常快照保存 | 待开始 |
-| BE-06 | 异常查询接口 | 待开始 |
-| BE-07 | Pearson 关联分析 | 待开始 |
-| BE-08 | 报警引擎 | 待开始 |
-| BE-09 | 适配器抽象层 | 待开始 |
+---
 
 ## Team
 
@@ -215,9 +205,11 @@ git commit -m "<详细的技术实现描述>"
 - **项目经理**：DeepSeek（进度监督）
 - **执行**：Claude Code
 
+---
+
 ## Reference Documents
 
 - `数据监控系统 - 计划书.md`（v1.5 定稿版）- 权威技术规范
 - `数据监控系统-需求文档.md` - 功能需求
-- `PROJECT_STATE.md` - 项目进度跟踪
-- `项目情况说明.md` - 项目全貌
+- `PROJECT_STATE.md` - 项目进度跟踪（动态）
+- `项目情况说明.md` - 项目全貌（静态）
