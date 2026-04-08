@@ -1,25 +1,22 @@
-from sqlalchemy import Column, Integer, Float, DateTime, func, UniqueConstraint
-from sqlalchemy.orm import relationship
-from .database import Base
+"""时序数据表模型 - 仅存储原始数据"""
+from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey, Index
+from ..database import Base
 
 
 class TimeSeries(Base):
-    """时序数据表 - 按计划书 v1.5 2.4 节定义"""
+    """时序数据表"""
 
     __tablename__ = "time_series"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    metric_id = Column(Integer, nullable=False)
-    timestamp = Column(DateTime, nullable=False)
-    value = Column(Float)  # 原始值（NULL表示缺失）
+    metric_id = Column(Integer, ForeignKey("metrics.id"), nullable=False, index=True)
+    timestamp = Column(DateTime(timezone=True), nullable=False)
+    value = Column(Float, nullable=True)  # NULL 表示缺失值，不填充默认值
 
-    # 外键关联
-    metric = relationship("Metric", back_populates="time_series_data")
-
-    # 唯一约束：同一指标同一时间戳只能有一个数据点
+    # 复合索引优化查询 (metric_id, timestamp)
     __table_args__ = (
-        UniqueConstraint('metric_id', 'timestamp', name='uq_metric_timestamp'),
+        Index("idx_time_series_metric_time", "metric_id", "timestamp"),
     )
 
     def __repr__(self):
-        return f"<TimeSeries(metric_id={self.metric_id}, timestamp='{self.timestamp}', value={self.value})>"
+        return f"<TimeSeries(id={self.id}, metric_id={self.metric_id}, timestamp={self.timestamp}, value={self.value})>"

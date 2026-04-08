@@ -1,23 +1,19 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
-from sqlalchemy.orm import relationship
-from .database import Base
+"""指标定义表模型"""
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.sql import func
+from ..database import Base
 
 
 class Metric(Base):
-    """指标定义表 - 按计划书 v1.5 2.4 节定义"""
+    """指标定义表"""
 
     __tablename__ = "metrics"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False, unique=True)
+    name = Column(String(50), unique=True, nullable=False, index=True)
     description = Column(String(200))
     unit = Column(String(20))
-    created_at = Column(DateTime, default=func.current_timestamp())
-
-    # 关联关系
-    time_series_data = relationship("TimeSeries", back_populates="metric")
-    anomalies = relationship("Anomaly", back_populates="metric")
-    alerts = relationship("Alert", back_populates="metric")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):
-        return f"<Metric(name='{self.name}', unit='{self.unit}')>"
+        return f"<Metric(id={self.id}, name='{self.name}')>"

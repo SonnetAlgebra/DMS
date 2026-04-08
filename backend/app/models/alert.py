@@ -1,23 +1,24 @@
-from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey
-from sqlalchemy.orm import relationship
-from .database import Base
+"""报警记录表模型"""
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, Index
+from sqlalchemy.sql import func
+from ..database import Base
 
 
 class Alert(Base):
-    """报警记录表 - 按计划书 v1.5 2.4 节定义"""
+    """报警记录表"""
 
     __tablename__ = "alerts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    anomaly_id = Column(Integer, nullable=False)
-    metric_id = Column(Integer, nullable=False)
-    message = Column(String(20))  # 报警消息
-    status = Column(String(20), default='pending')  # 状态：pending, acknowledged, resolved
-    created_at = Column(DateTime, default=func.current_timestamp())
+    anomaly_id = Column(Integer, ForeignKey("anomalies.id"), nullable=False)
+    metric_id = Column(Integer, ForeignKey("metrics.id"), nullable=False)
+    message = Column(Text, nullable=True)
+    status = Column(String(20), default="pending", nullable=False)  # pending, resolved, dismissed
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # 外键关联
-    anomaly = relationship("Anomaly", back_populates="alerts")
-    metric = relationship("Metric", back_populates="alerts")
+    __table_args__ = (
+        Index("idx_alerts_status", "status"),
+    )
 
     def __repr__(self):
-        return f"<Alert(id={self.id}, status='{self.status}', created_at='{self.created_at}')>"
+        return f"<Alert(id={self.id}, status='{self.status}', metric_id={self.metric_id})>"
