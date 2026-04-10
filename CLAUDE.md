@@ -67,9 +67,102 @@ feat: 实现 time_series 表创建
 ```
 
 **版本控制过滤红线**：
-- 必须维护 .gitignore 文件，严禁将 .env、venv/、__pycache__/、*.pyc、.pytest_cache/ 等私密配置及缓存文件提交至 Git
 - 提交前必须运行 `git status` 确认工作区干净
 - 发现已提交的敏感文件必须立即从 Git 历史中清除
+
+**.gitignore 架构规范（前后端分离策略）**：
+
+| 位置 | 用途 | 必须忽略的内容 |
+|------|------|----------------|
+| `DMS/.gitignore` | 项目根（全局） | IDE 配置、操作系统缓存、临时文件 |
+| `DMS/backend/.gitignore` | 后端专用 | Python 缓存、venv、环境变量、数据库文件、测试覆盖率 |
+| `DMS/frontend/.gitignore` | 前端专用 | node_modules、构建产物、环境变量、日志、缓存 |
+
+**根目录 .gitignore（全局规则）**：
+```
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp
+```
+
+**backend/.gitignore（后端规则）**：
+```
+# Python 编译和缓存文件
+__pycache__/
+*.py[cod]
+*.pyo
+*$py.class
+
+# Python 打包和分发
+build/
+dist/
+*.egg-info/
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# 环境变量和敏感配置
+.env
+.env.local
+.env.*.local
+
+# 数据库文件（仅用于开发）
+*.db
+*.sqlite
+*.sqlite3
+
+# 日志文件
+*.log
+logs/
+
+# 测试覆盖率
+.coverage
+.pytest_cache/
+htmlcov/
+.cache/
+coverage.xml
+```
+
+**frontend/.gitignore（前端规则）**：
+```
+# Node.js 依赖
+node_modules/
+
+# 构建产物
+dist/
+build/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 日志文件
+*.log
+logs/
+
+# 缓存
+.cache/
+.vite/
+```
+
+**维护原则**：
+- 新增子目录时，立即检查是否需要添加对应的 .gitignore
+- 修改技术栈时，同步更新对应的 .gitignore 规则
+- 与 PROJECT_STATE.md 保持同步，项目结构变化时同步维护
 
 ### 5. 技术红线 (Technical Red Lines)
 
