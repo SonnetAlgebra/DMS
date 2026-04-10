@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard">
     <aside class="sidebar">
+      <DataUpload @uploadSuccess="refreshMetrics" />
       <MetricList @select="handleSelect" />
     </aside>
     <main class="main-content">
@@ -26,6 +27,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import DataUpload from './DataUpload.vue'
 import MetricList from './MetricList.vue'
 import MetricCard from './MetricCard.vue'
 import TimeSeriesChart from './TimeSeriesChart.vue'
@@ -67,6 +69,15 @@ const handleSelect = async (id: number) => {
     }
   }
 }
+
+const refreshMetrics = async () => {
+  try {
+    const res = await client.get<MetricsListResponse>('/metrics')
+    metrics.value = res.data.metrics
+  } catch (error) {
+    console.error('刷新指标列表失败:', error)
+  }
+}
 </script>
 
 <style scoped>
@@ -78,6 +89,9 @@ const handleSelect = async (id: number) => {
 
 .sidebar {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .main-content {

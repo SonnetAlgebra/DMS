@@ -29,3 +29,26 @@ export interface MetricsListResponse {
   metrics: Metric[]
   total: number
 }
+
+// CSV上传响应类型
+export interface UploadResponse {
+  success: boolean
+  inserted: number
+  metrics: Metric[]
+}
+
+// 异常点类型
+export interface AnomalyPoint {
+  timestamp: string
+  value: number
+  z_score: number
+}
+
+// 异常检测响应类型
+export interface DetectResponse {
+  anomalies: AnomalyPoint[]
+  count: number
+  mean: number
+  std: number
+  threshold_used: number
+}
