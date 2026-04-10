@@ -186,7 +186,7 @@ logs/
 ### 7. 文件修改权限 (File Modification Authority)
 
 **有权修改的文件（执行阶段产出）**：
-- `项目情况说明.md` - 执行阶段项目全貌
+- `项目情况说明.md` - 执行阶段“当前”项目全貌
 - `CLAUDE.md` - 执行阶段核心戒律
 - `PROJECT_STATE.md` - 执行阶段进度跟踪
 - `Git Commit 记录` - 执行阶段技术档案
