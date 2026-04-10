@@ -6,34 +6,63 @@
 
 ## 当前任务节点
 
-**Day 3 完成** ✅ - 前端基础框架（FE-01 ~ FE-03）
+**待定** - 等待下一步任务指令
 
 ---
 
 ## 待办事宜 (TODO)
 
-### 下一阶段任务
+### 前端待完成任务
 
 | 编号 | 任务 | 状态 |
 |------|------|------|
-| 待定 | Day 4 任务计划 | ⏳ 待规划 |
+| FE-04 | 数据上传组件 | ⏳ 待开始 |
+| FE-07 | 异常面板组件 | ⏳ 待开始 |
+| FE-08 | 热力图组件 | ⏳ 待开始 |
+
+### 后端待完成任务
+
+| 编号 | 任务 | 状态 |
+|------|------|------|
+| BE-05 | 异常快照保存 | ⏳ 待开始 |
+| BE-06 | 异常查询接口 | ⏳ 待开始 |
+| BE-07 | Pearson 关联分析 | ⏳ 待开始 |
+| BE-08 | 报警引擎 | ⏳ 待开始 |
+| BE-09 | 适配器抽象层 | ⏳ 待开始 |
+
+### 文档待完成任务
+
+| 编号 | 任务 | 状态 |
+|------|------|------|
+| DOC-01 | 示例数据准备 | ⏳ 待开始 |
+| DOC-02 | API 文档 | ⏳ 待开始 |
+| DOC-03 | 部署文档 | ⏳ 待开始 |
+| DOC-04 | 一键启动脚本 | ⏳ 待开始 |
 
 ---
 
 ## 已完成任务
 
-- ✅ FE-03：时序图表组件（ECharts 初始化工具、TimeSeriesChart.vue、Dashboard 集成）
-- ✅ FE-02：布局组件开发（MetricList、MetricCard、Dashboard 完整布局、App.vue 根组件）
+### 后端已完成（稳定任务，无需修改）
+- ✅ BE-01：FastAPI 骨架搭建
+- ✅ BE-02：数据库建模（4 张表：metrics、time_series、anomalies、alerts）
+
+### 后端已完成（后续可能扩展/调用）
+- 🔄 BE-03：CSV 数据接入（CSV 适配器、上传 API、去重逻辑、NULL 值保留）
+- 🔄 BE-04：动态异常判定（Z-Score 算法、方案4：全局统计量、/metrics 和 /data 接口）
+
+### 前端已完成（稳定任务，无需修改）
 - ✅ FE-01：Vue3 项目搭建（Vite + TypeScript + Vue 3.5.13，package.json、vite.config.ts、类型定义、API 客户端）
 
-**Day 3 完成**：前端基础框架搭建完成，包含指标列表、指标卡片、时序图表组件
-- ✅ FE-01：Vue3 项目搭建（Vite + TypeScript + Vue 3.5.13，package.json、vite.config.ts、类型定义、API 客户端）
-- ✅ BE-01：FastAPI 骨架搭建
-- ✅ BE-02：数据库建模
-- ✅ BE-03：CSV 数据接入（CSV 适配器、上传 API、去重逻辑、NULL 值保留）
-- ✅ BE-04：动态异常判定（Z-Score 算法、方案4：全局统计量、/metrics 和 /data 接口）
+### 前端已完成（后续可能扩展/调用）
+- 🔄 FE-02：布局组件开发（MetricList、MetricCard、Dashboard 完整布局、App.vue 根组件）- 后续需集成 FE-04（数据上传）和 FE-07（异常面板）
+- 🔄 FE-03：指标概览组件（MetricCard.vue）- 后续需根据业务调整展示内容
+- 🔄 FE-05：时序图表组件（ECharts 初始化工具、TimeSeriesChart.vue、Dashboard 集成）- 后续需集成 FE-08（热力图）
+
+### 文档/配置已完成
 - ✅ 源码检查意见修复：config.py 缺少 database_path、模型定义确认、main.py 切换原生 SQLite
 - ✅ 核心文件职责对齐：项目情况说明.md、CLAUDE.md、PROJECT_STATE.md
+- ✅ Git 忽略配置规范化：前后端分离策略
 
 ---
 
