@@ -14,10 +14,11 @@
       </div>
       <div class="chart-container">
         <p v-if="!selectedMetric" class="placeholder">选择指标查看详情</p>
-        <div v-else class="selected-metric">
-          <h3>{{ selectedMetricName }}</h3>
-          <p>时序图表将在 FE-03 中实现</p>
-        </div>
+        <TimeSeriesChart
+          v-else
+          :data="getMetricData(selectedMetric)"
+          :title="selectedMetricName"
+        />
       </div>
     </main>
   </div>
@@ -27,6 +28,7 @@
 import { ref, computed, onMounted } from 'vue'
 import MetricList from './MetricList.vue'
 import MetricCard from './MetricCard.vue'
+import TimeSeriesChart from './TimeSeriesChart.vue'
 import type { Metric, DataPoint } from '@/types'
 import client from '@/api/client'
 
@@ -93,27 +95,18 @@ const handleSelect = async (id: number) => {
 
 .chart-container {
   flex: 1;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 400px;
 }
 
 .placeholder {
   color: #999;
   font-size: 1.1rem;
-}
-
-.selected-metric h3 {
-  margin: 0 0 0.5rem 0;
-  color: #333;
-}
-
-.selected-metric p {
-  margin: 0;
-  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
