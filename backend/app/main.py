@@ -3,9 +3,10 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 from pathlib import Path
+from app.config import settings
 
 # 数据库初始化（原生 SQLite）
-DB_PATH = "./dms.db"
+DB_PATH = settings.database_path
 
 
 def init_db():
@@ -92,6 +93,11 @@ app.add_middleware(
 async def health_check():
     """健康检查接口"""
     return JSONResponse(status_code=200, content={"status": "ok"})
+
+
+# 注册路由
+from app.routers import upload
+app.include_router(upload.router, prefix="/api/v1/data", tags=["data"])
 
 
 if __name__ == "__main__":
