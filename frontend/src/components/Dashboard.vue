@@ -19,8 +19,14 @@
           v-else
           :data="getMetricData(selectedMetric)"
           :title="selectedMetricName"
+          @anomalyDetected="handleAnomalyDetected"
         />
       </div>
+      <AnomalyPanel
+        v-if="selectedMetric"
+        :metricId="selectedMetric"
+        @anomalyDetected="handleAnomalyDetected"
+      />
     </main>
   </div>
 </template>
@@ -31,7 +37,8 @@ import DataUpload from './DataUpload.vue'
 import MetricList from './MetricList.vue'
 import MetricCard from './MetricCard.vue'
 import TimeSeriesChart from './TimeSeriesChart.vue'
-import type { Metric, DataPoint } from '@/types'
+import AnomalyPanel from './AnomalyPanel.vue'
+import type { Metric, DataPoint, AnomalyPoint } from '@/types'
 import client from '@/api/client'
 
 const metrics = ref<Metric[]>([])
@@ -77,6 +84,11 @@ const refreshMetrics = async () => {
   } catch (error) {
     console.error('刷新指标列表失败:', error)
   }
+}
+
+const handleAnomalyDetected = (anomalies: AnomalyPoint[]) => {
+  console.log('检测到异常:', anomalies)
+  // 可以在这里添加其他处理逻辑，比如发送通知
 }
 </script>
 
