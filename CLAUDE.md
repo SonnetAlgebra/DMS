@@ -99,6 +99,7 @@ feat: 实现 time_series 表创建
 - `Git Commit 记录` - 执行阶段技术档案
 - `backend/` 目录下的所有代码文件
 - `frontend/` 目录下的所有代码文件
+- `.gitignore` - 与 `PROJECT_STATE.md` 同步更新
 
 **无权修改的文件（计划阶段产出）**：
 - `项目/IT 项目管理流程.md` - 项目管理规范，指导性内容
