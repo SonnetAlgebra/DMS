@@ -33,3 +33,25 @@ class MetricsListResponse(BaseModel):
     """指标列表响应"""
     metrics: List[MetricInfo]
     total: int
+
+
+class AnomalyPoint(BaseModel):
+    """异常点"""
+    timestamp: str
+    value: float
+    z_score: float
+
+
+class DetectRequest(BaseModel):
+    """异常检测请求"""
+    metric_id: int
+    threshold: float = 3.0
+
+
+class DetectResponse(BaseModel):
+    """异常检测响应"""
+    anomalies: List[AnomalyPoint]
+    count: int
+    mean: float
+    std: float
+    threshold_used: float
