@@ -6,7 +6,7 @@
 
 ## 当前任务节点
 
-**FE-03**：时序图表组件
+**Day 3 完成** ✅ - 前端基础框架（FE-01 ~ FE-03）
 
 ---
 
@@ -16,13 +16,17 @@
 
 | 编号 | 任务 | 状态 |
 |------|------|------|
-| FE-03 | 时序图表组件 | 🔄 当前任务 |
+| 待定 | Day 4 任务计划 | ⏳ 待规划 |
 
 ---
 
 ## 已完成任务
 
+- ✅ FE-03：时序图表组件（ECharts 初始化工具、TimeSeriesChart.vue、Dashboard 集成）
 - ✅ FE-02：布局组件开发（MetricList、MetricCard、Dashboard 完整布局、App.vue 根组件）
+- ✅ FE-01：Vue3 项目搭建（Vite + TypeScript + Vue 3.5.13，package.json、vite.config.ts、类型定义、API 客户端）
+
+**Day 3 完成**：前端基础框架搭建完成，包含指标列表、指标卡片、时序图表组件
 - ✅ FE-01：Vue3 项目搭建（Vite + TypeScript + Vue 3.5.13，package.json、vite.config.ts、类型定义、API 客户端）
 - ✅ BE-01：FastAPI 骨架搭建
 - ✅ BE-02：数据库建模
@@ -35,12 +39,8 @@
 
 ## 下一步行动计划
 
-1. 创建 ECharts 初始化工具（utils/echarts.ts）
-2. 实现 TimeSeriesChart.vue 组件（时序图表）
-3. 集成到 Dashboard，支持选择指标后显示图表
-4. 本地自测验证
-5. Git 提交
-6. 更新本文件，Day 3 完成
+1. 等待 Day 4 任务计划发布
+2. 根据计划继续执行
 
 ---
 
