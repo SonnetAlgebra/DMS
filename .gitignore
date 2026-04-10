@@ -1,14 +1,21 @@
-# IDE 配置（全局）
-.vscode/
+# === 项目管理文件（非编码，不提交Git） ===
+项目/
+项目情况说明.md
+CLAUDE.md
+PROJECT_STATE.md
+Day*.md
+任务计划*.md
+
+# === 编辑器/系统文件 ===
+.DS_Store
+Thumbs.db
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
 
-# 操作系统文件（全局）
-.DS_Store
-Thumbs.db
-
-# 临时文件（全局）
+# === 临时文件 ===
 *.tmp
-*.temp
+temp/
+tmp/

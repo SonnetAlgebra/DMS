@@ -1,51 +1,22 @@
-# Python 编译和缓存文件
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
 *$py.class
 *.so
 .Python
-
-# Python 打包和分发
-build/
-dist/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# 虚拟环境
 venv/
 env/
-ENV/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
 
-# 环境变量和敏感配置
-.env
-.env.local
-.env.*.local
-
-# IDE 配置
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# 操作系统文件
-.DS_Store
-Thumbs.db
-
-# 数据库文件（仅用于开发）
+# 数据库（本地开发）
 *.db
 *.sqlite
 *.sqlite3
+monitor.db
 
-# 日志文件
-*.log
-logs/
-
-# 测试覆盖率
-.coverage
-.pytest_cache/
-htmlcov/
-.cache/
-coverage.xml
+# 环境变量（含敏感信息）
+.env
+.env.local
+.env.*.local

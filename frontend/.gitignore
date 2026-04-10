@@ -1,19 +1,11 @@
-# Node.js 依赖
+# 依赖
 node_modules/
-
-# 构建产物
 dist/
-build/
+dist-ssr/
 
-# 环境变量
-.env
-.env.local
-.env.*.local
+# 构建输出
+*.local
 
-# 日志文件
-*.log
-logs/
-
-# 缓存
-.cache/
-.vite/
+# 编辑器
+.idea/
+.vscode/
