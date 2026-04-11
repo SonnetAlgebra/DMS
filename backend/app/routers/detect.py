@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Query, HTTPException
 from app.schemas.data import DetectRequest, DetectResponse, AnomalyPoint
 from app.services.anomaly import AnomalyService
+from app.services import alert_service
 from app.config import settings
 import sqlite3
 from datetime import datetime
@@ -33,11 +34,13 @@ async def detect_anomalies(request: DetectRequest):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # 1. 检查指标是否存在
-    cursor.execute("SELECT id FROM metrics WHERE id = ?", (request.metric_id,))
-    if cursor.fetchone() is None:
+    # 1. 检查指标是否存在，同时获取指标名称
+    cursor.execute("SELECT id, name FROM metrics WHERE id = ?", (request.metric_id,))
+    metric = cursor.fetchone()
+    if metric is None:
         conn.close()
         raise HTTPException(status_code=404, detail="指标不存在")
+    metric_id, metric_name = metric
 
     # 2. 查询该指标全部数据（limit=5000限制）
     cursor.execute(
@@ -120,6 +123,10 @@ async def detect_anomalies(request: DetectRequest):
 
     conn.commit()
     conn.close()
+
+    # 触发报警：对每个异常点记录报警日志
+    for anomaly in anomaly_points:
+        alert_service.alert(metric_name, anomaly)
 
     return DetectResponse(
         anomalies=[AnomalyPoint(**a) for a in anomaly_points],

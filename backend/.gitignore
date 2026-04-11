@@ -20,3 +20,8 @@ monitor.db
 .env
 .env.local
 .env.*.local
+
+# 日志文件
+*.log
+logs/
+alerts.log
