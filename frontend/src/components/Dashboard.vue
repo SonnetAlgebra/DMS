@@ -13,14 +13,23 @@
           :data="getMetricData(m.id)"
         />
       </div>
-      <div class="chart-container">
-        <p v-if="!selectedMetric" class="placeholder">选择指标查看详情</p>
-        <TimeSeriesChart
-          v-else
-          :data="getMetricData(selectedMetric)"
-          :title="selectedMetricName"
-          @anomalyDetected="handleAnomalyDetected"
-        />
+      <div class="chart-section">
+        <div class="chart-controls" v-if="selectedMetric">
+          <ThresholdSlider v-model="threshold" />
+          <DetectButton
+            :metricId="selectedMetric"
+            :threshold="threshold"
+            @detectComplete="handleDetectComplete"
+          />
+        </div>
+        <div class="chart-container">
+          <p v-if="!selectedMetric" class="placeholder">选择指标查看详情</p>
+          <TimeSeriesChart
+            v-else
+            :data="getMetricData(selectedMetric)"
+            :title="selectedMetricName"
+          />
+        </div>
       </div>
       <AnomalyPanel
         v-if="selectedMetric"
@@ -38,12 +47,15 @@ import MetricList from './MetricList.vue'
 import MetricCard from './MetricCard.vue'
 import TimeSeriesChart from './TimeSeriesChart.vue'
 import AnomalyPanel from './AnomalyPanel.vue'
+import DetectButton from './DetectButton.vue'
+import ThresholdSlider from './ThresholdSlider.vue'
 import type { Metric, DataPoint, AnomalyPoint } from '@/types'
 import client from '@/api/client'
 
 const metrics = ref<Metric[]>([])
 const selectedMetric = ref<number | null>(null)
 const metricsData = ref<Map<number, DataPoint[]>>(new Map())
+const threshold = ref(3.0)
 
 const selectedMetricName = computed(() => {
   const m = metrics.value.find(m => m.id === selectedMetric.value)
@@ -90,6 +102,14 @@ const handleAnomalyDetected = (anomalies: AnomalyPoint[]) => {
   console.log('检测到异常:', anomalies)
   // 可以在这里添加其他处理逻辑，比如发送通知
 }
+
+const handleDetectComplete = async (result: any) => {
+  console.log('检测完成:', result)
+  // 检测完成后重新加载当前指标的数据，以更新异常标记
+  if (selectedMetric.value) {
+    await handleSelect(selectedMetric.value)
+  }
+}
 </script>
 
 <style scoped>
@@ -117,6 +137,29 @@ const handleAnomalyDetected = (anomalies: AnomalyPoint[]) => {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.chart-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-controls .threshold-slider {
+  flex: 1;
+  min-width: 200px;
+  max-width: 400px;
 }
 
 .chart-container {
