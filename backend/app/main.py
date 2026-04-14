@@ -96,11 +96,12 @@ async def health_check():
 
 
 # 注册路由
-from app.routers import upload, metrics, data, detect
+from app.routers import upload, metrics, data, detect, correlation
 app.include_router(upload.router, prefix="/api/v1/data", tags=["data"])
 app.include_router(metrics.router, prefix="/api/v1/metrics", tags=["metrics"])
 app.include_router(data.router, prefix="/api/v1/metrics", tags=["data"])
 app.include_router(detect.router, prefix="/api/v1/metrics", tags=["detect"])
+app.include_router(correlation.router, prefix="/api/v1", tags=["correlation"])
 
 
 if __name__ == "__main__":

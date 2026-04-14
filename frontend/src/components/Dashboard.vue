@@ -2,7 +2,12 @@
   <div class="dashboard">
     <aside class="sidebar">
       <DataUpload @uploadSuccess="refreshMetrics" />
-      <MetricList @select="handleSelect" />
+      <MetricList
+        @select="handleSelect"
+        @toggle="handleToggle"
+        :selectedId="selectedMetric"
+        :selectedIds="selectedIds"
+      />
     </aside>
     <main class="main-content">
       <div class="metric-cards">
@@ -31,6 +36,13 @@
           />
         </div>
       </div>
+      <div class="heatmap-section" v-if="selectedIds.length >= 2">
+        <h3>指标关联分析</h3>
+        <HeatmapChart
+          :metricIds="selectedIds"
+          :metricNames="selectedNames"
+        />
+      </div>
       <AnomalyPanel
         v-if="selectedMetric"
         :metricId="selectedMetric"
@@ -49,17 +61,26 @@ import TimeSeriesChart from './TimeSeriesChart.vue'
 import AnomalyPanel from './AnomalyPanel.vue'
 import DetectButton from './DetectButton.vue'
 import ThresholdSlider from './ThresholdSlider.vue'
+import HeatmapChart from './HeatmapChart.vue'
 import type { Metric, DataPoint, AnomalyPoint } from '@/types'
 import client from '@/api/client'
 
 const metrics = ref<Metric[]>([])
 const selectedMetric = ref<number | null>(null)
+const selectedIds = ref<number[]>([])
 const metricsData = ref<Map<number, DataPoint[]>>(new Map())
 const threshold = ref(3.0)
 
 const selectedMetricName = computed(() => {
   const m = metrics.value.find(m => m.id === selectedMetric.value)
   return m?.name || ''
+})
+
+const selectedNames = computed(() => {
+  return selectedIds.value.map(id => {
+    const m = metrics.value.find(m => m.id === id)
+    return m?.name || ''
+  })
 })
 
 const getMetricData = (metricId: number): DataPoint[] => {
@@ -86,6 +107,15 @@ const handleSelect = async (id: number) => {
     } catch (error) {
       console.error('加载指标数据失败:', error)
     }
+  }
+}
+
+const handleToggle = (id: number) => {
+  const index = selectedIds.value.indexOf(id)
+  if (index > -1) {
+    selectedIds.value.splice(index, 1)
+  } else {
+    selectedIds.value.push(id)
   }
 }
 
@@ -177,5 +207,18 @@ const handleDetectComplete = async (result: any) => {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.heatmap-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+.heatmap-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #333;
 }
 </style>
