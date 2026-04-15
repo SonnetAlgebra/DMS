@@ -3,11 +3,10 @@ from fastapi import APIRouter, Query, HTTPException
 from app.schemas.data import DataResponse, DataPoint
 from app.services.anomaly import AnomalyService
 from app.config import settings
-import sqlite3
+from app.database import get_db
 
 router = APIRouter()
 anomaly_service = AnomalyService()
-DB_PATH = settings.database_path
 MAX_LIMIT = 5000
 
 
@@ -34,70 +33,66 @@ async def get_metric_data(
     - 再分页返回具体数据
     - 保证翻页时判定标准一致
     """
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    with get_db() as conn:
+        cursor = conn.cursor()
 
-    # 1. 检查指标是否存在
-    cursor.execute("SELECT id FROM metrics WHERE id = ?", (metric_id,))
-    if cursor.fetchone() is None:
-        conn.close()
-        raise HTTPException(status_code=404, detail="指标不存在")
+        # 1. 检查指标是否存在
+        cursor.execute("SELECT id FROM metrics WHERE id = ?", (metric_id,))
+        if cursor.fetchone() is None:
+            raise HTTPException(status_code=404, detail="指标不存在")
 
-    # 2. 查询总数
-    cursor.execute(
-        "SELECT COUNT(*) FROM time_series WHERE metric_id = ?",
-        (metric_id,)
-    )
-    total = cursor.fetchone()[0]
-
-    # 3. 方案4：先查询全部数据计算全局统计量（limit=5000限制）
-    cursor.execute(
-        """
-        SELECT timestamp, value
-        FROM time_series
-        WHERE metric_id = ?
-        ORDER BY timestamp
-        LIMIT ?
-        """,
-        (metric_id, MAX_LIMIT)
-    )
-    all_rows = cursor.fetchall()
-
-    # 4. 提取全部数值用于计算全局统计量
-    all_values = [row[1] for row in all_rows]
-
-    # 5. 执行异常检测（基于全部数据）
-    result = anomaly_service.detect(all_values, threshold)
-
-    # 6. 处理错误
-    if "error" in result:
-        conn.close()
-        raise HTTPException(
-            status_code=400,
-            detail=result["error"]
+        # 2. 查询总数
+        cursor.execute(
+            "SELECT COUNT(*) FROM time_series WHERE metric_id = ?",
+            (metric_id,)
         )
+        total = cursor.fetchone()[0]
 
-    # 7. 分页查询返回数据（使用 all_rows 进行切片）
-    if offset >= len(all_rows):
-        # offset 超过总数，返回空数组
-        data_points = []
-    else:
-        page_rows = all_rows[offset:offset + limit]
-        # 注意：z_scores 需要根据 offset 进行对齐
-        data_points = []
-        for i, row in enumerate(page_rows):
-            global_index = offset + i
-            is_anomaly = result["z_scores"][global_index] > threshold if result["std"] > 0 else False
-            data_points.append(
-                DataPoint(
-                    timestamp=row[0],
-                    value=row[1],
-                    is_anomaly=is_anomaly,
-                    z_score=result["z_scores"][global_index]
-                )
+        # 3. 方案4：先查询全部数据计算全局统计量（limit=5000限制）
+        cursor.execute(
+            """
+            SELECT timestamp, value
+            FROM time_series
+            WHERE metric_id = ?
+            ORDER BY timestamp
+            LIMIT ?
+            """,
+            (metric_id, MAX_LIMIT)
+        )
+        all_rows = cursor.fetchall()
+
+        # 4. 提取全部数值用于计算全局统计量
+        all_values = [row[1] for row in all_rows]
+
+        # 5. 执行异常检测（基于全部数据）
+        result = anomaly_service.detect(all_values, threshold)
+
+        # 6. 处理错误
+        if "error" in result:
+            raise HTTPException(
+                status_code=400,
+                detail=result["error"]
             )
 
-    conn.close()
+        # 7. 分页查询返回数据（使用 all_rows 进行切片）
+        if offset >= len(all_rows):
+            # offset 超过总数，返回空数组
+            data_points = []
+        else:
+            page_rows = all_rows[offset:offset + limit]
+            # 注意：z_scores 需要根据 offset 进行对齐
+            data_points = []
+            for i, row in enumerate(page_rows):
+                global_index = offset + i
+                is_anomaly = result["z_scores"][global_index] > threshold if result["std"] > 0 else False
+                data_points.append(
+                    DataPoint(
+                        timestamp=row[0],
+                        value=row[1],
+                        is_anomaly=is_anomaly,
+                        z_score=result["z_scores"][global_index]
+                    )
+                )
 
     return DataResponse(
         data=data_points,

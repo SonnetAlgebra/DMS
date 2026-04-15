@@ -2,10 +2,10 @@
 from fastapi import APIRouter, Query, HTTPException
 from app.schemas.anomalies import AnomalyListResponse, AnomalyDetail
 from app.config import settings
+from app.database import get_db
 import sqlite3
 
 router = APIRouter()
-DB_PATH = settings.database_path
 
 
 @router.get("/anomalies", response_model=AnomalyListResponse)
@@ -34,57 +34,55 @@ async def get_anomalies(
         - 每次检测会删除该指标的旧快照并保存新快照
         - 返回按检测时间倒序排列
     """
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    with get_db() as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
 
-    # 构建查询条件
-    if metric_id is not None:
-        # 检查指标是否存在
-        cursor.execute("SELECT id, name FROM metrics WHERE id = ?", (metric_id,))
-        metric = cursor.fetchone()
-        if metric is None:
-            conn.close()
-            raise HTTPException(status_code=404, detail="指标不存在")
+        # 构建查询条件
+        if metric_id is not None:
+            # 检查指标是否存在
+            cursor.execute("SELECT id, name FROM metrics WHERE id = ?", (metric_id,))
+            metric = cursor.fetchone()
+            if metric is None:
+                raise HTTPException(status_code=404, detail="指标不存在")
 
-        # 查询特定指标的异常记录
-        cursor.execute(
-            """
-            SELECT a.*, m.name as metric_name
-            FROM anomalies a
-            JOIN metrics m ON a.metric_id = m.id
-            WHERE a.metric_id = ?
-            ORDER BY a.detected_at DESC, a.timestamp DESC
-            LIMIT ? OFFSET ?
-            """,
-            (metric_id, limit, offset)
-        )
+            # 查询特定指标的异常记录
+            cursor.execute(
+                """
+                SELECT a.*, m.name as metric_name
+                FROM anomalies a
+                JOIN metrics m ON a.metric_id = m.id
+                WHERE a.metric_id = ?
+                ORDER BY a.detected_at DESC, a.timestamp DESC
+                LIMIT ? OFFSET ?
+                """,
+                (metric_id, limit, offset)
+            )
 
-        # 查询总数
-        cursor.execute(
-            "SELECT COUNT(*) FROM anomalies WHERE metric_id = ?",
-            (metric_id,)
-        )
-        total = cursor.fetchone()[0]
-    else:
-        # 查询所有指标的异常记录
-        cursor.execute(
-            """
-            SELECT a.*, m.name as metric_name
-            FROM anomalies a
-            JOIN metrics m ON a.metric_id = m.id
-            ORDER BY a.detected_at DESC, a.timestamp DESC
-            LIMIT ? OFFSET ?
-            """,
-            (limit, offset)
-        )
+            # 查询总数
+            cursor.execute(
+                "SELECT COUNT(*) FROM anomalies WHERE metric_id = ?",
+                (metric_id,)
+            )
+            total = cursor.fetchone()[0]
+        else:
+            # 查询所有指标的异常记录
+            cursor.execute(
+                """
+                SELECT a.*, m.name as metric_name
+                FROM anomalies a
+                JOIN metrics m ON a.metric_id = m.id
+                ORDER BY a.detected_at DESC, a.timestamp DESC
+                LIMIT ? OFFSET ?
+                """,
+                (limit, offset)
+            )
 
-        # 查询总数
-        cursor.execute("SELECT COUNT(*) FROM anomalies")
-        total = cursor.fetchone()[0]
+            # 查询总数
+            cursor.execute("SELECT COUNT(*) FROM anomalies")
+            total = cursor.fetchone()[0]
 
-    rows = cursor.fetchall()
-    conn.close()
+        rows = cursor.fetchall()
 
     anomalies = [
         AnomalyDetail(

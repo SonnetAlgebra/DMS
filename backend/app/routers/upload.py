@@ -1,13 +1,13 @@
 """CSV 上传 API 路由"""
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.adapters.csv_adapter import CSVAdapter
 from app.schemas.upload import UploadResponse, MetricInfo
 from app.config import settings
-import sqlite3
+from app.database import get_db
 from datetime import datetime
 
 router = APIRouter()
-DB_PATH = settings.database_path  # 使用配置文件中的数据库路径
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB 文件大小限制
 
 
 @router.post("/upload", response_model=UploadResponse)
@@ -25,28 +25,42 @@ async def upload_csv(file: UploadFile = File(...)):
     Returns:
         UploadResponse: 包含导入成功数量和指标列表
     """
-    # 1. 读取文件内容
+    # 1. 验证文件类型
+    if not file.filename or not file.filename.lower().endswith('.csv'):
+        raise HTTPException(status_code=400, detail="仅支持 CSV 文件")
+
+    # 2. 验证 MIME 类型（浏览器可能不发送或发送不准确，做宽松校验）
+    if file.content_type and file.content_type not in ['text/csv', 'text/plain', 'application/vnd.ms-excel']:
+        raise HTTPException(status_code=400, detail="文件类型不正确，请上传 CSV 文件")
+
+    # 3. 读取文件内容
     content = await file.read()
+
+    # 4. 验证文件大小
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"文件大小超过限制 {MAX_FILE_SIZE // (1024 * 1024)}MB"
+        )
 
     # 2. 使用 CSVAdapter 解析（适配器模式）
     adapter = CSVAdapter(content)
 
     # 验证数据源
     if not adapter.validate():
-        raise ValueError("CSV 格式无效，无法解析")
+        raise HTTPException(status_code=400, detail="CSV 格式无效，请检查文件内容")
 
     # 3. 获取指标信息
     metrics_info = adapter.get_metrics()
 
-    # 4. 原生 SQLite 操作
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    # 4. 原生 SQLite 操作（使用连接池）
+    with get_db() as conn:
+        cursor = conn.cursor()
 
-    inserted_count = 0
-    imported_metrics = []
-    metric_id_map: dict[str, int] = {}  # metric_name -> metric_id
+        inserted_count = 0
+        imported_metrics = []
+        metric_id_map: dict[str, int] = {}  # metric_name -> metric_id
 
-    try:
         # 先创建或获取所有指标
         for metric_name in metrics_info.values():
             cursor.execute("SELECT id FROM metrics WHERE name = ?", (metric_name,))
@@ -79,8 +93,6 @@ async def upload_csv(file: UploadFile = File(...)):
                 inserted_count += 1
 
         conn.commit()
-    finally:
-        conn.close()
 
     return UploadResponse(
         success=True,

@@ -2,10 +2,9 @@
 from fastapi import APIRouter
 from app.schemas.data import MetricsListResponse, MetricInfo
 from app.config import settings
-import sqlite3
+from app.database import get_db
 
 router = APIRouter()
-DB_PATH = settings.database_path
 
 
 @router.get("", response_model=MetricsListResponse)
@@ -15,15 +14,13 @@ async def get_metrics():
 
     接口路径: /api/v1/metrics
     """
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    with get_db() as conn:
+        cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT id, name, description, unit FROM metrics ORDER BY id"
-    )
-    rows = cursor.fetchall()
-
-    conn.close()
+        cursor.execute(
+            "SELECT id, name, description, unit FROM metrics ORDER BY id"
+        )
+        rows = cursor.fetchall()
 
     metrics = [
         MetricInfo(

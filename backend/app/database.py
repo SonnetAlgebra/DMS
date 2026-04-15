@@ -1,4 +1,6 @@
 """数据库连接配置"""
+import sqlite3
+from contextlib import contextmanager
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -38,3 +40,27 @@ def init_db():
     global metadata
     metadata = MetaData()
     Base.metadata.create_all(bind=engine)
+
+
+# ============================================================================
+# 原生 SQLite 连接池（用于路由层）
+# ============================================================================
+DB_PATH = settings.database_path
+
+
+@contextmanager
+def get_db():
+    """
+    获取原生 SQLite 数据库连接（上下文管理器）
+
+    用法:
+        with get_db() as conn:
+            cursor = conn.cursor()
+            # ... 执行 SQL 操作
+            conn.commit()
+    """
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        yield conn
+    finally:
+        conn.close()
