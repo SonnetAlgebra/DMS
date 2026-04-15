@@ -25,3 +25,8 @@ monitor.db
 *.log
 logs/
 alerts.log
+
+# 测试文件（开发时用，不提交）
+test_*.py
+test_*.csv
+*.test.*
