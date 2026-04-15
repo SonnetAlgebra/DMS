@@ -40,10 +40,6 @@ bun install
 ### 方式1：一键启动
 
 ```bash
-# Mac/Linux
-./start.sh
-
-# Windows
 start.bat
 ```
 
@@ -52,7 +48,7 @@ start.bat
 ```bash
 # 终端1：启动后端
 cd backend
-source venv/bin/activate  # Windows: venv\Scripts\activate
+venv\Scripts\activate
 uvicorn app.main:app --reload
 
 # 终端2：启动前端

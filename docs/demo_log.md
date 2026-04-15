@@ -167,11 +167,6 @@ curl -X POST http://127.0.0.1:8000/api/v1/correlation \
 - 前端：新窗口启动 `bun run dev`
 - 状态：✅ 脚本已创建
 
-### Mac/Linux (start.sh)
-- 后端：后台启动
-- 前端：前台启动
-- 状态：✅ 脚本已创建
-
 ---
 
 ## 九、部署文档
@@ -185,7 +180,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/correlation \
 
 - [x] README.md 部署文档
 - [x] sample_metrics.csv 示例数据
-- [x] start.sh + start.bat 一键启动脚本
+- [x] start.bat 一键启动脚本（Windows）
 - [x] 功能演示日志
 
 ---
